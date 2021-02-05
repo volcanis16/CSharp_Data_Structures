@@ -156,6 +156,7 @@ namespace LinkedList
             if (target == this.Head)
             {
                 this.Head = target.Next;
+                if (target == this.Tail) this.Tail = null;
                 return;
             }
             LinkedListNode pred = FindPredecessor(this.Head, data);
@@ -167,14 +168,16 @@ namespace LinkedList
         /// Reverses the order of the linked list.
         /// </summary>
         /// <param name="list">List to reverse.</param>
-        public void ReverseLinkedList(SLinkedList list)
+        public void ReverseLinkedList()
         {
-            list.Head = ReverseOperation(list.Head);
+            LinkedListNode temp = this.Head;
+            this.Head = ReverseOperation(this.Head);
+            this.Tail = temp;
         }
 
         private LinkedListNode ReverseOperation(LinkedListNode head)
         {
-            if (head.Next == null) return head;
+            if (head == null || head.Next == null) return head;
             LinkedListNode newHead = ReverseOperation(head.Next);
             LinkedListNode temp = head.Next.Next;
             head.Next.Next = head;
@@ -205,7 +208,8 @@ namespace LinkedList
         public void InsertFront(int newData)
         {
             DLinkedListNode newNode = new DLinkedListNode(newData);
-            if (this.Head == null) {
+            if (this.Head == null) 
+            {
                 this.Head = newNode;
                 this.Tail = newNode;
             } else
@@ -239,19 +243,19 @@ namespace LinkedList
         /// <summary>
         /// Finds and returns the first Node with data that matches the provided data.
         /// </summary>
-        /// <param name="head">Node to start at when called.</param>
+        /// <param name="node">Node to start at when called.</param>
         /// <param name="data">Data to compare Nodes against.</param>
         /// <returns></returns>
-        public DLinkedListNode FindNode(DLinkedListNode head, int data)
+        public DLinkedListNode FindNode(DLinkedListNode node, int data)
         {
-            if (head == null) return null;
-            if (head.Data == data)
+            if (node == null) return null;
+            if (node.Data == data)
             {
-                return head;
+                return node;
             }
             else
             {
-                return FindNode(head.Next, data);
+                return FindNode(node.Next, data);
             }
         }
 
@@ -262,12 +266,35 @@ namespace LinkedList
         public void DeleteNode(int data)
         {
             DLinkedListNode target = FindNode(this.Head, data);
-            if (target == null) {
+            if (target == null) 
+            {
                 Console.WriteLine("Node not found in list");
                 return;
             }
+
+            if (target == this.Head)
+            {
+                this.Head = target.Next;
+                if (target == this.Tail)
+                {
+                    this.Tail = null;
+                    return;
+                }
+                this.Head.Prev = null;
+                return;
+            }
+
             DLinkedListNode pred = target.Prev;
-            pred.Next = target.Next;
+            if (target == this.Tail)
+            {
+                this.Tail = pred;
+                pred.Next = null;
+            }
+            else
+            {
+                pred.Next = target.Next;
+                pred.Next.Prev = pred;
+            }
         }
     }
     
